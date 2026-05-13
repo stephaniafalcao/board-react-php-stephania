@@ -64,7 +64,7 @@ services:
       nginx:
         condition: service_started
     environment:
-      VITE_API_URL: ${VITE_API_URL}
+      VITE_API_URL: ${VITE_API_URL:-/api}
       CHOKIDAR_USEPOLLING: "true"
     ports:
       - "3000:5173"
