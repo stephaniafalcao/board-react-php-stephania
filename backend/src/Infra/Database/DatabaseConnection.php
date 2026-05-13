@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
-final class Database
+namespace App\Infra\Database;
+
+use PDO;
+
+final class DatabaseConnection
 {
     public static function getConnection(): PDO
     {

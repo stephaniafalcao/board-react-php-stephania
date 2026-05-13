@@ -1,0 +1,23 @@
+.create-board-card {
+  min-height: 252px;
+  border-radius: 8px;
+}
+
+.create-board-card {
+  border: 2px dashed #d8e0ec;
+  background: transparent;
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.create-board-card:hover {
+  border-color: #155dfc;
+  background: rgba(21, 93, 252, 0.04);
+}
