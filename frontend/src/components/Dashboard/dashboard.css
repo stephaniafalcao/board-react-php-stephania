@@ -23,6 +23,12 @@
   background: rgba(255, 255, 255, 0.35);
 }
 
+.boards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(250px, 1fr));
+  gap: 30px;
+}
+
 @media (max-width: 780px) {
   .dashboard-layout {
     flex-direction: column;
