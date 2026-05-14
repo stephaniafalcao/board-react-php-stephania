@@ -1,4 +1,5 @@
 import "./sidebar.css";
+import { NavLink } from "react-router-dom";
 import { SidebarIcon } from "./Icon/SidebarIcon";
 import { SidebarLinkIcon } from "./Icon/SidebarLinkIcon";
 
@@ -18,10 +19,13 @@ export function Sidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        <a href="#" className="sidebar-link active">
+        <NavLink
+          to="/boards"
+          className={({ isActive }) => `sidebar-link${isActive ? " active" : ""}`}
+        >
           <span className="sidebar-link-icon"><SidebarLinkIcon/></span>
           <span>Dashboard</span>
-        </a>
+        </NavLink>
       </nav>
     </aside>
   );

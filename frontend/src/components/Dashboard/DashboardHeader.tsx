@@ -1,9 +1,10 @@
-import "./dashboardheader.css";
+import { TitleForm } from "../TitleForm/TitleForm";
+import "./dashboard-header.css";
 
 export function DashboardHeader() {
   return (
     <header className="dashboard-header">
-      <h2>Your Dashboards</h2>
+      <TitleForm>Your Dashboards</TitleForm>
       <p>Manage and create your project boards here.</p>
     </header>
   );

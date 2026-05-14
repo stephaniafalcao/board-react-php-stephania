@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import "./createboardicon.css";
+import "./create-board-icon.css";
 
 export function CreateBoardIcon() {
   return (

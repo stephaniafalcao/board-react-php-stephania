@@ -5,38 +5,63 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Application\Board\UseCase\FindAllBoardsUseCase;
+use App\Application\Board\UseCase\CreateBoardUseCase;
 use App\Infra\Database\DatabaseConnection;
 use App\Infra\Repository\Board\PdoBoardRepository;
 use App\Interface\Http\Controller\BoardController;
 use App\Interface\Http\Response\JsonResponse;
 
-$method = $_SERVER['REQUEST_METHOD'];
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+$path = is_string($uri) ? $uri : '/';
+
+$boardControllerFactory = static function (): BoardController {
+    static $boardController = null;
+
+    if ($boardController instanceof BoardController) {
+        return $boardController;
+    }
+
+    $connection = DatabaseConnection::getConnection();
+    $boardRepository = new PdoBoardRepository($connection);
+
+    $findAllBoardsUseCase = new FindAllBoardsUseCase($boardRepository);
+    $createBoardUseCase = new CreateBoardUseCase($boardRepository);
+
+    $boardController = new BoardController(
+        $findAllBoardsUseCase,
+        $createBoardUseCase
+    );
+
+    return $boardController;
+};
+
+$routeKey = sprintf('%s %s', $method, $path);
 
 try {
-    if ($method === 'GET' && $uri === '/health') {
-        JsonResponse::success([
-            'status' => 'ok',
-        ]);
+    $routes = [
+        'GET /health' => static function (): void {
+            JsonResponse::success([
+                'status' => 'ok',
+            ]);
+        },
+        'GET /boards' => static function () use ($boardControllerFactory): void {
+            $boardControllerFactory()->index();
+        },
+        'POST /boards' => static function () use ($boardControllerFactory): void {
+            $boardControllerFactory()->save();
+        },
+    ];
+
+    if (!array_key_exists($routeKey, $routes)) {
+        JsonResponse::error([
+            'error' => 'Route not found',
+        ], 404);
 
         exit;
     }
 
-    if ($method === 'GET' && $uri === '/boards') {
-        $connection = DatabaseConnection::getConnection();
-
-        $boardRepository = new PdoBoardRepository($connection);
-        $findAllBoardsUseCase = new FindAllBoardsUseCase($boardRepository);
-        $boardController = new BoardController($findAllBoardsUseCase);
-
-        $boardController->index();
-
-        exit;
-    }
-
-    JsonResponse::error([
-        'error' => 'Route not found',
-    ], 404);
+    $routes[$routeKey]();
 } catch (Throwable $exception) {
     JsonResponse::error([
         'error' => 'Internal server error',

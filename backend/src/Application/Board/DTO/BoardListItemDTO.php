@@ -13,6 +13,8 @@ final readonly class BoardListItemDTO
         public string $themeColor,
         public string $icon,
         public int $tasksCount,
+        public int $completedTasksCount,
+        public int $pendingTasksCount,
         public string $createdAt,
     ) {}
 }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infra\Repository\Board;
 
+use App\Domain\Board\Entity\Board;
 use App\Domain\Board\Repository\BoardRepositoryInterface;
+use DateTimeImmutable;
 use PDO;
 use PDOException;
 use RuntimeException;
@@ -58,6 +60,59 @@ final class PdoBoardRepository implements BoardRepositoryInterface
         }
     }
 
+    public function save(
+        Board $board
+    ): Board
+    {
+        $sql = '
+            INSERT INTO board (
+                name,
+                description,
+                theme_color,
+                icon,
+                created_at,
+                updated_at
+            ) VALUES (
+                :name,
+                :description,
+                :themeColor,
+                :icon,
+                CURRENT_TIMESTAMP,
+                NULL
+            )
+            RETURNING
+                id,
+                name,
+                description,
+                theme_color,
+                icon,
+                created_at
+        ';
+
+        try {
+            $statement = $this->connection->prepare($sql);
+            $statement->execute([
+                'name' => $board->getName(),
+                'description' => $board->getDescription(),
+                'themeColor' => $board->getThemeColor(),
+                'icon' => $board->getIcon(),
+            ]);
+
+            $createdBoard = $statement->fetch(PDO::FETCH_ASSOC);
+
+            if ($createdBoard === false) {
+                throw new RuntimeException('Unable to create board.');
+            }
+
+            return $this->mapToBoardEntity($createdBoard);
+        } catch (PDOException $exception) {
+            throw new RuntimeException(
+                'Unable to create board.',
+                previous: $exception
+            );
+        }
+    }
+
     private function mapToBoardListItem(array $board): array
     {
         return [
@@ -71,5 +126,18 @@ final class PdoBoardRepository implements BoardRepositoryInterface
             'completedTasksCount' => (int) $board['completed_tasks_count'],
             'pendingTasksCount' => (int) $board['pending_tasks_count'],
         ];
+    }
+
+    private function mapToBoardEntity(array $board): Board
+    {
+        return new Board(
+            id: (int) $board['id'],
+            name: (string) $board['name'],
+            description: $board['description'] === null ? null : (string) $board['description'],
+            themeColor: (string) $board['theme_color'],
+            icon: (string) $board['icon'],
+            createdAt: new DateTimeImmutable((string) $board['created_at']),
+            updatedAt: null
+        );
     }
 }
