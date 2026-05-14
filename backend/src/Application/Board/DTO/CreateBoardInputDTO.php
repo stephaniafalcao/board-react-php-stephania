@@ -8,6 +8,20 @@ use InvalidArgumentException;
 
 final readonly class CreateBoardInputDTO
 {
+    private const ALLOWED_ICONS = [
+        'megaphone',
+        'map',
+        'message',
+        'message-square',
+        'compass',
+        'users',
+        'rocket',
+        'chart',
+        'kanban',
+        'bug',
+        'palette',
+    ];
+
     public function __construct(
         public string $name,
         public ?string $description,
@@ -24,8 +38,8 @@ final readonly class CreateBoardInputDTO
             description: isset($data['description']) && $data['description'] !== ''
                 ? trim((string) $data['description'])
                 : null,
-            themeColor: trim((string) ($data['themeColor'] ?? '')),
-            icon: trim((string) ($data['icon'] ?? '')),
+            themeColor: strtoupper(trim((string) ($data['themeColor'] ?? ''))),
+            icon: strtolower(trim((string) ($data['icon'] ?? ''))),
         );
     }
 
@@ -43,8 +57,16 @@ final readonly class CreateBoardInputDTO
             throw new InvalidArgumentException('Theme color is required.');
         }
 
+        if (!preg_match('/^#[A-F0-9]{6}$/', $this->themeColor)) {
+            throw new InvalidArgumentException('Theme color must be a valid hex code.');
+        }
+
         if ($this->icon === '') {
             throw new InvalidArgumentException('Board icon is required.');
+        }
+
+        if (!in_array($this->icon, self::ALLOWED_ICONS, true)) {
+            throw new InvalidArgumentException('Board icon is invalid.');
         }
     }
 }
