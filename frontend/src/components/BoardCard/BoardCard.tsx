@@ -1,5 +1,9 @@
 import type { CSSProperties } from "react";
 import "./board-card.css";
+import { Card } from "../Card/Card";
+import { CardBody } from "../CardBody/CardBody";
+import { CardFooter } from "../CardFooter/CardFooter";
+import { CardHeader } from "../CardHeader/CardHeader";
 
 import {
   Megaphone,
@@ -15,9 +19,10 @@ import {
   type LucideIcon,
   CircleCheck,
   CalendarDays,
+  EllipsisVertical,
 } from "lucide-react";
 
-type BoardIcon =
+export type BoardIcon =
   | "megaphone"
   | "map"
   | "message"
@@ -29,6 +34,22 @@ type BoardIcon =
   | "bug"
   | "palette";
 
+export type BoardPriorityTone = "urgent" | "high" | "medium" | "low" | "neutral";
+
+export type BoardPriorityBadge = {
+  label: string;
+  tone?: BoardPriorityTone;
+  backgroundColor?: string;
+  textColor?: string;
+};
+
+export type BoardMember = {
+  id: string | number;
+  name: string;
+  avatarUrl?: string;
+  initials?: string;
+};
+
 export type Board = {
   title: string;
   description: string;
@@ -36,6 +57,8 @@ export type Board = {
   date: string;
   icon: BoardIcon;
   themeColor: string;
+  priorityBadge?: BoardPriorityBadge;
+  members?: BoardMember[];
   badge?: string;
 };
 
@@ -57,6 +80,14 @@ const icons: Record<BoardIcon, LucideIcon> = {
 };
 
 const defaultThemeColor = "#1D9BF0";
+const maxVisibleMembers = 3;
+const priorityToneClassMap: Record<BoardPriorityTone, string> = {
+  urgent: "board-priority-urgent",
+  high: "board-priority-high",
+  medium: "board-priority-medium",
+  low: "board-priority-low",
+  neutral: "board-priority-neutral",
+};
 
 function normalizeThemeColor(themeColor: string): string {
   const normalized = themeColor.trim();
@@ -77,40 +108,136 @@ function hexToRgba(hexColor: string, alpha: number): string {
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
 
+function resolvePriorityBadge(board: Board): BoardPriorityBadge | null {
+  if (board.priorityBadge) {
+    return board.priorityBadge;
+  }
+
+  if (board.badge) {
+    return {
+      label: board.badge,
+      tone: "urgent",
+    };
+  }
+
+  return null;
+}
+
+function getInitials(member: BoardMember): string {
+  if (member.initials && member.initials.trim() !== "") {
+    return member.initials.trim().slice(0, 2).toUpperCase();
+  }
+
+  const parts = member.name
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (parts.length === 0) {
+    return "??";
+  }
+
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+}
+
 export function BoardCard({ board }: BoardCardProps) {
   const Icon = icons[board.icon];
+  const priorityBadge = resolvePriorityBadge(board);
+  const members = board.members ?? [];
+  const visibleMembers = members.slice(0, maxVisibleMembers);
+  const hiddenMembersCount = members.length - visibleMembers.length;
   const iconColor = normalizeThemeColor(board.themeColor);
   const iconStyle = {
     "--board-icon-color": iconColor,
     "--board-icon-bg": hexToRgba(iconColor, 0.12),
   } as CSSProperties;
+  const badgeStyle =
+    priorityBadge &&
+    (priorityBadge.backgroundColor || priorityBadge.textColor)
+      ? ({
+          ...(priorityBadge.backgroundColor
+            ? { "--board-priority-bg": priorityBadge.backgroundColor }
+            : {}),
+          ...(priorityBadge.textColor
+            ? { "--board-priority-color": priorityBadge.textColor }
+            : {}),
+        } as CSSProperties)
+      : undefined;
+  const badgeToneClass =
+    priorityBadge && priorityBadge.tone
+      ? priorityToneClassMap[priorityBadge.tone]
+      : "board-priority-neutral";
 
   return (
-    <article className="board-card">
-      <div className="board-card-top">
+    <Card className="board-card">
+      <CardHeader>
         <div className="board-icon" style={iconStyle}>
           <Icon size={20} strokeWidth={2.2} />
         </div>
 
         <button className="board-menu" aria-label="Open board options">
-          ⋮
+          <EllipsisVertical size={18} strokeWidth={2.2} />
         </button>
-      </div>
+      </CardHeader>
 
-      <div className="board-card-body">
+      <CardBody className="board-card-body">
         <div className="board-title-row">
           <h3>{board.title}</h3>
 
-          {board.badge && <span className="board-badge">{board.badge}</span>}
+          {priorityBadge && (
+            <span
+              className={`board-priority-badge ${badgeToneClass}`}
+              style={badgeStyle}
+            >
+              {priorityBadge.label}
+            </span>
+          )}
         </div>
 
-        <p>{board.description}</p>
-      </div>
+        <p className="board-description" title={board.description}>
+          {board.description}
+        </p>
+      </CardBody>
 
-      <footer className="board-card-footer">
-        <span><CircleCheck /> {board.tasks} Tasks</span>
-        <span><CalendarDays /> {board.date}</span>
-      </footer>
-    </article>
+      <CardFooter className="board-card-footer">
+        <div className="board-card-meta">
+          <span>
+            <CircleCheck /> {board.tasks} Tasks
+          </span>
+          <span>
+            <CalendarDays /> {board.date}
+          </span>
+        </div>
+
+        {members.length > 0 && (
+          <div className="board-members" aria-label={`${members.length} team members`}>
+            {visibleMembers.map((member, index) => (
+              <div
+                key={member.id}
+                className="board-member-avatar"
+                style={{ zIndex: visibleMembers.length - index }}
+                title={member.name}
+              >
+                {member.avatarUrl ? (
+                  <img src={member.avatarUrl} alt={member.name} loading="lazy" />
+                ) : (
+                  <span>{getInitials(member)}</span>
+                )}
+              </div>
+            ))}
+
+            {hiddenMembersCount > 0 && (
+              <div className="board-member-more" title={`${hiddenMembersCount} more members`}>
+                +{hiddenMembersCount}
+              </div>
+            )}
+          </div>
+        )}
+      </CardFooter>
+    </Card>
   );
 }
