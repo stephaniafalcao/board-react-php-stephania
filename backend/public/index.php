@@ -2,53 +2,68 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use App\Application\Board\UseCase\FindAllBoardsUseCase;
+use App\Application\Board\UseCase\CreateBoardUseCase;
+use App\Infra\Database\DatabaseConnection;
+use App\Infra\Repository\Board\PdoBoardRepository;
+use App\Interface\Http\Controller\BoardController;
+use App\Interface\Http\Response\JsonResponse;
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-$allowedOrigins = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-];
+$path = is_string($uri) ? $uri : '/';
 
-if (in_array($origin, $allowedOrigins, true)) {
-    header("Access-Control-Allow-Origin: {$origin}");
-}
+$boardControllerFactory = static function (): BoardController {
+    static $boardController = null;
 
-header('Vary: Origin');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Accept');
-header('Content-Type: application/json');
+    if ($boardController instanceof BoardController) {
+        return $boardController;
+    }
 
-if ($method === 'OPTIONS') {
-    http_response_code(204);
-    exit;
-}
+    $connection = DatabaseConnection::getConnection();
+    $boardRepository = new PdoBoardRepository($connection);
 
-if ($method === 'GET' && $uri === '/health') {
-    try {
-        $pdo = Database::getConnection();
-        $pdo->query('SELECT 1');
+    $findAllBoardsUseCase = new FindAllBoardsUseCase($boardRepository);
+    $createBoardUseCase = new CreateBoardUseCase($boardRepository);
 
-        http_response_code(200);
-        echo json_encode([
-            'status' => 'ok',
-            'database' => 'connected',
-        ]);
-        exit;
-    } catch (Throwable $exception) {
-        http_response_code(503);
-        echo json_encode([
-            'status' => 'error',
-            'database' => 'disconnected',
-        ]);
+    $boardController = new BoardController(
+        $findAllBoardsUseCase,
+        $createBoardUseCase
+    );
+
+    return $boardController;
+};
+
+$routeKey = sprintf('%s %s', $method, $path);
+
+try {
+    $routes = [
+        'GET /health' => static function (): void {
+            JsonResponse::success([
+                'status' => 'ok',
+            ]);
+        },
+        'GET /boards' => static function () use ($boardControllerFactory): void {
+            $boardControllerFactory()->index();
+        },
+        'POST /boards' => static function () use ($boardControllerFactory): void {
+            $boardControllerFactory()->save();
+        },
+    ];
+
+    if (!array_key_exists($routeKey, $routes)) {
+        JsonResponse::error([
+            'error' => 'Route not found',
+        ], 404);
+
         exit;
     }
-}
 
-http_response_code(404);
-echo json_encode([
-    'status' => 'error',
-    'message' => 'Route not found',
-]);
+    $routes[$routeKey]();
+} catch (Throwable $exception) {
+    JsonResponse::error([
+        'error' => 'Internal server error',
+    ], 500);
+}
