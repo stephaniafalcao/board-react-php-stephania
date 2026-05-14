@@ -1,12 +1,10 @@
 .create-board-card {
-  min-height: 252px;
-  border-radius: 8px;
-}
-
-.create-board-card {
+  width: 100%;
   border: 2px dashed #d8e0ec;
   background: transparent;
   color: #334155;
+  padding: 22px 22px 20px;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,6 +13,8 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-height: 252px;
+  border-radius: 8px;
 }
 
 .create-board-card:hover {

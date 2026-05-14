@@ -23,27 +23,14 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
+  background: var(--board-icon-bg, #eff6ff);
+  color: var(--board-icon-color, #1d9bf0);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   flex-shrink: 0;
-}
-
-.board-icon.blue {
-  background: #eff6ff;
-  color: #1d9bf0;
-}
-
-.board-icon.orange {
-  background: #fff7ed;
-  color: #f97316;
-}
-
-.board-icon.gray {
-  background: #f1f5f9;
-  color: #64748b;
 }
 
 .board-menu {

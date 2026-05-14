@@ -1,8 +1,14 @@
 import "./App.css";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Dashboard } from "./components/Dashboard/Dashboard";
-
-const apiUrl = import.meta.env.VITE_API_URL ?? '/api';
+import { CreateBoardPage } from "./components/CreateBoardPage/CreateBoardPage";
 
 export default function App() {
-  return <Dashboard />;
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/boards" replace />} />
+      <Route path="/boards" element={<Dashboard />} />
+      <Route path="/boards/new" element={<CreateBoardPage />} />
+    </Routes>
+  );
 }

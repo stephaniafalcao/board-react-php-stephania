@@ -28,13 +28,16 @@ const iconMap: Record<string, Board["icon"]> = {
   "message-square": "message",
   compass: "compass",
   users: "users",
+  rocket: "rocket",
+  chart: "chart",
+  kanban: "kanban",
+  bug: "bug",
+  palette: "palette",
 };
 
-function mapColor(themeColor: string): Board["color"] {
-  const color = themeColor.toLowerCase();
-  if (color.includes("f59e0b")) return "orange";
-  if (color.includes("6b7280") || color.includes("9ca3af")) return "gray";
-  return "blue";
+function mapIcon(icon: string): Board["icon"] {
+  const normalizedIcon = icon.trim().toLowerCase();
+  return iconMap[normalizedIcon] ?? "compass";
 }
 
 function toBoardViewModel(item: BoardApiItem): BoardViewModel {
@@ -47,8 +50,8 @@ function toBoardViewModel(item: BoardApiItem): BoardViewModel {
       month: "short",
       day: "2-digit",
     }),
-    icon: iconMap[item.icon] ?? "compass",
-    color: mapColor(item.themeColor),
+    icon: mapIcon(item.icon),
+    themeColor: item.themeColor,
   };
 }
 

@@ -1,0 +1,22 @@
+.color-option {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--color);
+    cursor: pointer;
+    position: relative;
+    transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.color-option:hover {
+    transform: translateY(-1px);
+}
+
+.color-option.selected {
+    box-shadow:
+        0 0 0 3px #ffffff,
+        0 0 0 5px #0052cc;
+}

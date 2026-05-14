@@ -1,17 +1,17 @@
 import { BoardCard } from "../BoardCard/BoardCard";
-import { CreateBoardCard } from "../CreateBoard/CreateBoard";
+import { CreateBoardCard } from "../CreateBoard/CreateBoardCard";
 import { Sidebar } from "../Sidebar/Sidebar";
 import "./dashboard.css";
 import { DashboardHeader } from "./DashboardHeader";
 import { useBoards } from "../../hooks/useBoards";
+import { Button } from "../Button/Button";
+import { Page } from "../Page/Page";
 
 export function Dashboard() {
   const { boards, isLoading, isError, isRefreshing, retry } = useBoards();
 
   return (
-    <main className="dashboard-layout">
-      <Sidebar />
-      <section className="dashboard-content">
+    <Page>
         <DashboardHeader />
         <div className="boards-grid">
           <CreateBoardCard />
@@ -19,9 +19,9 @@ export function Dashboard() {
           {isError && (
             <p>
               Não foi possível carregar os boards.
-              <button type="button" onClick={retry}>
+              <Button type="button" onClick={retry}>
                 Tentar novamente
-              </button>
+              </Button>
             </p>
           )}
           {!isLoading &&
@@ -29,7 +29,6 @@ export function Dashboard() {
             boards.map((board) => <BoardCard key={board.id} board={board} />)}
           {isRefreshing && <p>Atualizando boards...</p>}
         </div>
-      </section>
-    </main>
+      </Page>
   );
 }

@@ -1,0 +1,13 @@
+.label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+}
+.label span {
+    color: #ef4444;
+}
+.label small {
+    font-size: 12px;
+    font-weight: 500;
+    color: #94a3b8;
+}
