@@ -1,0 +1,29 @@
+.icon-option {
+  height: 52px;
+  min-width: 96px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+.icon-option:hover {
+  color: #0052cc;
+  border-color: #9bbcf5;
+  background: #f8fbff;
+  transform: translateY(-1px);
+}
+.icon-option.selected {
+  color: #0052cc;
+  border-color: #0052cc;
+  box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.14);
+}

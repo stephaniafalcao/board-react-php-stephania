@@ -1,0 +1,17 @@
+.boards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+@media (max-width: 1100px) {
+  .boards-grid {
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 780px) {
+  .boards-grid {
+    grid-template-columns: 1fr;
+  }
+}

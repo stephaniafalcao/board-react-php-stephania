@@ -1,0 +1,53 @@
+.board-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.identity-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.identity-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.color-list {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.icon-list {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(82px, 104px));
+  gap: 72px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .icon-list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .icon-option {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 560px) {
+  .color-list {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .icon-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
