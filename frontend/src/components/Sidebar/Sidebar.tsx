@@ -1,34 +1,50 @@
+import type { ReactNode } from "react";
 import "./sidebar.css";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { LayoutGrid, PanelsTopLeft } from "lucide-react";
 import { SidebarIcon } from "./Icon/SidebarIcon";
 import { SidebarLinkIcon } from "./Icon/SidebarLinkIcon";
 
-export function Sidebar() {
-  const { pathname } = useLocation();
-  const isKanbanRoute = pathname.startsWith("/boards/kanban");
+export type SidebarMode = "default" | "workspace";
+
+export type SidebarConfig = {
+  mode?: SidebarMode;
+  suppressDashboardActive?: boolean;
+  brandTitle?: string;
+  brandLines?: string[];
+  brandIcon?: ReactNode;
+  linkIcon?: ReactNode;
+};
+
+type SidebarProps = {
+  config?: SidebarConfig;
+};
+
+export function Sidebar({ config }: SidebarProps) {
+  const mode = config?.mode ?? "default";
+  const isWorkspaceMode = mode === "workspace";
+  const suppressDashboardActive = config?.suppressDashboardActive ?? false;
+  const brandTitle = config?.brandTitle ?? (isWorkspaceMode ? "Workspace" : "KanbanFlow");
+  const brandLines =
+    config?.brandLines ??
+    (isWorkspaceMode ? ["Productivity Suite"] : ["PRODUCTIVITY", "WORKSPACE"]);
+  const brandIcon =
+    config?.brandIcon ?? (isWorkspaceMode ? <PanelsTopLeft size={18} strokeWidth={2.2} /> : <SidebarIcon />);
+  const dashboardLinkIcon =
+    config?.linkIcon ?? (isWorkspaceMode ? <LayoutGrid size={16} strokeWidth={2.2} /> : <SidebarLinkIcon />);
 
   return (
-    <aside className={`sidebar ${isKanbanRoute ? "sidebar-kanban" : ""}`.trim()}>
+    <aside className="sidebar">
       <div className="sidebar-logo-area">
         <div className="logo-icon">
-          {isKanbanRoute ? (
-            <PanelsTopLeft size={18} strokeWidth={2.2} />
-          ) : (
-            <SidebarIcon />
-          )}
+          {brandIcon}
         </div>
 
-        <div className={`sidebar-brand ${isKanbanRoute ? "sidebar-brand-kanban" : ""}`.trim()}>
-          <h1>{isKanbanRoute ? "Workspace" : "KanbanFlow"}</h1>
-          {isKanbanRoute ? (
-            <p>Productivity Suite</p>
-          ) : (
-            <>
-              <p>PRODUCTIVITY</p>
-              <p>WORKSPACE</p>
-            </>
-          )}
+        <div className={`sidebar-brand ${isWorkspaceMode ? "sidebar-brand-workspace" : ""}`.trim()}>
+          <h1>{brandTitle}</h1>
+          {brandLines.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
         </div>
       </div>
 
@@ -36,15 +52,11 @@ export function Sidebar() {
         <NavLink
           to="/boards"
           className={({ isActive }) =>
-            `sidebar-link${isActive && !isKanbanRoute ? " active" : ""}`
+            `sidebar-link${isActive && !suppressDashboardActive ? " active" : ""}`
           }
         >
           <span className="sidebar-link-icon">
-            {isKanbanRoute ? (
-              <LayoutGrid size={16} strokeWidth={2.2} />
-            ) : (
-              <SidebarLinkIcon />
-            )}
+            {dashboardLinkIcon}
           </span>
           <span>Dashboard</span>
         </NavLink>

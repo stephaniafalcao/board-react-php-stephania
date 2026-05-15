@@ -34,7 +34,7 @@ export function Dashboard() {
               <BoardCard
                 key={board.id}
                 board={board}
-                onClick={() => navigate("/boards/kanban")}
+                onClick={() => navigate("/workspace")}
               />
             ))}
           {isRefreshing && <p>Atualizando boards...</p>}

@@ -80,16 +80,14 @@
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
-  justify-content: right;
+  justify-content: center;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .kanban-column-menu:hover {
-  background: inherit;
-  color: inherit;
-  transform: none;
-  box-shadow: none;
+  background: #e1e8f2;
+  color: #5b6a84;
 }
 
 .kanban-column-tasks {

@@ -186,7 +186,12 @@ export function KanbanBoardPage() {
   const renderedColumns = ensureAllColumns(columns);
 
   return (
-    <Page>
+    <Page
+      sidebarConfig={{
+        mode: "workspace",
+        suppressDashboardActive: true,
+      }}
+    >
       <div className="page-section-toolbar">
         <Header
           title="Developer Sprint #42"
@@ -213,13 +218,13 @@ export function KanbanBoardPage() {
                 <span>{column.tasks.length}</span>
               </div>
 
-              <Button
+              <button
                 type="button"
                 className="kanban-column-menu"
                 aria-label={`Open ${column.title} options`}
               >
                 <Ellipsis size={16} strokeWidth={2.4} />
-              </Button>
+              </button>
             </div>
 
             <div

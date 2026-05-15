@@ -9,11 +9,11 @@ export function CreateBoardPage() {
     <Page>
         <section className="create-board-header">
           <nav className="breadcrumb" aria-label="Breadcrumb">
-            <Link to="/boards/kanban" className="breadcrumb-link">
+            <Link to="/" className="breadcrumb-link">
               Workspace
             </Link>
             <span className="breadcrumb-separator" aria-hidden="true">&gt;</span>
-            <Link to="/boards" className="breadcrumb-link">
+            <Link to="/" className="breadcrumb-link">
               Boards
             </Link>
           </nav>

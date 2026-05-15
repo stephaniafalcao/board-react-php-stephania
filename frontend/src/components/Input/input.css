@@ -13,11 +13,11 @@
     height: 54px;
     padding: 0 18px;
 }
-.input input::placeholder
+.input::placeholder
 {
   color: #7b8798;
 }
-.input input:focus {
+.input:focus {
     border-color: #0052cc;
     background: #ffffff;
     box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.12);
