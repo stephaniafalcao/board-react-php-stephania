@@ -20,6 +20,27 @@
   border-bottom: 1px solid #dfe6f0;
   background: rgba(255, 255, 255, 0.35);
 }
+.page-section {
+  min-height: 100vh;
+  padding: 48px 32px;
+  background: #f7f8fc;
+  color: #0f172a;
+}
+
+.page-section-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.page-section-toolbar .header {
+  margin: 0;
+}
+
+.page-section-action {
+  flex-shrink: 0;
+}
 @media (max-width: 780px) {
   .page-layout {
     flex-direction: column;
@@ -31,5 +52,15 @@
 
   .page-content::before {
     display: none;
+  }
+
+  .page-section-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .page-section-action {
+    align-self: flex-start;
   }
 }

@@ -1,8 +1,8 @@
 import './create-board-page.css';
 import { Link } from "react-router-dom";
-import { TitleForm } from '../TitleForm/TitleForm';
 import { FormNewBoard } from '../FormNewBoard/FormNewBoard';
 import { Page } from '../Page/Page';
+import { Header } from '../Header/Header';
 
 export function CreateBoardPage() {
   return (
@@ -13,16 +13,14 @@ export function CreateBoardPage() {
               Workspace
             </Link>
             <span className="breadcrumb-separator" aria-hidden="true">&gt;</span>
-            <Link to="/boards" className="breadcrumb-link">
+            <Link to="/" className="breadcrumb-link">
               Boards
             </Link>
           </nav>
-
-          <TitleForm>Create New Board</TitleForm>
-
-          <p>
-            Design a new space for your team's workflow and performance tracking.
-          </p>
+          <Header
+              title="Create New Board"
+              description="Design a new space for your team's workflow and performance tracking."
+          /> 
         </section>
 
         <section className="create-board-panel">

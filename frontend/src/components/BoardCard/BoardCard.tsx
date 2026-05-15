@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, KeyboardEvent } from "react";
 import "./board-card.css";
 import { Card } from "../Card/Card";
 import { CardBody } from "../CardBody/CardBody";
@@ -64,6 +64,7 @@ export type Board = {
 
 type BoardCardProps = {
   board: Board;
+  onClick?: () => void;
 };
 
 const icons: Record<BoardIcon, LucideIcon> = {
@@ -144,8 +145,9 @@ function getInitials(member: BoardMember): string {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
-export function BoardCard({ board }: BoardCardProps) {
+export function BoardCard({ board, onClick }: BoardCardProps) {
   const Icon = icons[board.icon];
+  const isClickable = typeof onClick === "function";
   const priorityBadge = resolvePriorityBadge(board);
   const members = board.members ?? [];
   const visibleMembers = members.slice(0, maxVisibleMembers);
@@ -171,15 +173,37 @@ export function BoardCard({ board }: BoardCardProps) {
     priorityBadge && priorityBadge.tone
       ? priorityToneClassMap[priorityBadge.tone]
       : "board-priority-neutral";
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (!isClickable) {
+      return;
+    }
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onClick();
+    }
+  };
 
   return (
-    <Card className="board-card">
+    <Card
+      className={`board-card ${isClickable ? "board-card-clickable" : ""}`.trim()}
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      role={isClickable ? "button" : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      aria-label={isClickable ? `Open ${board.title} board` : undefined}
+    >
       <CardHeader>
         <div className="board-icon" style={iconStyle}>
           <Icon size={20} strokeWidth={2.2} />
         </div>
 
-        <button className="board-menu" aria-label="Open board options">
+        <button
+          className="board-menu"
+          aria-label="Open board options"
+          onClick={(event) => event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
+        >
           <EllipsisVertical size={18} strokeWidth={2.2} />
         </button>
       </CardHeader>

@@ -6,9 +6,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Application\Board\UseCase\FindAllBoardsUseCase;
 use App\Application\Board\UseCase\CreateBoardUseCase;
+use App\Application\Task\UseCase\UpdateTaskStatusUseCase;
 use App\Infra\Database\DatabaseConnection;
 use App\Infra\Repository\Board\PdoBoardRepository;
+use App\Infra\Repository\Task\PdoTaskRepository;
 use App\Interface\Http\Controller\BoardController;
+use App\Interface\Http\Controller\TaskController;
 use App\Interface\Http\Response\JsonResponse;
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -36,6 +39,26 @@ $boardControllerFactory = static function (): BoardController {
     return $boardController;
 };
 
+$taskControllerFactory = static function (): TaskController {
+    static $taskController = null;
+
+    if ($taskController instanceof TaskController) {
+        return $taskController;
+    }
+
+    $connection = DatabaseConnection::getConnection();
+    $taskRepository = new PdoTaskRepository($connection);
+
+    $updateTaskStatus = new UpdateTaskStatusUseCase($taskRepository);
+
+
+    $taskController = new TaskController(
+        $updateTaskStatus
+    );
+
+    return $taskController;
+};
+
 $routeKey = sprintf('%s %s', $method, $path);
 
 try {
@@ -50,6 +73,9 @@ try {
         },
         'POST /boards' => static function () use ($boardControllerFactory): void {
             $boardControllerFactory()->save();
+        },
+        'PATCH /tasks' => static function () use ($taskControllerFactory): void {
+            $taskControllerFactory()->updateStatus();
         },
     ];
 
