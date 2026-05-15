@@ -20,6 +20,12 @@
   border-bottom: 1px solid #dfe6f0;
   background: rgba(255, 255, 255, 0.35);
 }
+.page-section {
+  min-height: 100vh;
+  padding: 48px 32px;
+  background: #f7f8fc;
+  color: #0f172a;
+}
 @media (max-width: 780px) {
   .page-layout {
     flex-direction: column;

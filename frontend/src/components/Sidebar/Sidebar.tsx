@@ -1,9 +1,12 @@
 import "./sidebar.css";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { SidebarIcon } from "./Icon/SidebarIcon";
 import { SidebarLinkIcon } from "./Icon/SidebarLinkIcon";
 
 export function Sidebar() {
+  const { pathname } = useLocation();
+  const isKanbanRoute = pathname.startsWith("/boards/kanban");
+
   return (
     <aside className="sidebar">
       <div className="sidebar-logo-area">
@@ -21,7 +24,9 @@ export function Sidebar() {
       <nav className="sidebar-nav">
         <NavLink
           to="/boards"
-          className={({ isActive }) => `sidebar-link${isActive ? " active" : ""}`}
+          className={({ isActive }) =>
+            `sidebar-link${isActive && !isKanbanRoute ? " active" : ""}`
+          }
         >
           <span className="sidebar-link-icon"><SidebarLinkIcon/></span>
           <span>Dashboard</span>

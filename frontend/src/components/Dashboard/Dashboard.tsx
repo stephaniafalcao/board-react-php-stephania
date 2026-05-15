@@ -1,18 +1,22 @@
 import { BoardCard } from "../BoardCard/BoardCard";
 import { CreateBoardCard } from "../CreateBoard/CreateBoardCard";
-import { Sidebar } from "../Sidebar/Sidebar";
 import "./dashboard.css";
-import { DashboardHeader } from "./DashboardHeader";
+import { Header } from "../Header/Header";
 import { useBoards } from "../../hooks/useBoards";
 import { Button } from "../Button/Button";
 import { Page } from "../Page/Page";
+import { useNavigate } from "react-router-dom";
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const { boards, isLoading, isError, isRefreshing, retry } = useBoards();
 
   return (
     <Page>
-        <DashboardHeader />
+        <Header
+            title="Your Dashboards"
+            description="Manage and create your projects boards here."
+        />
         <div className="boards-grid">
           <CreateBoardCard />
           {isLoading && <p>Carregando boards...</p>}
@@ -26,7 +30,13 @@ export function Dashboard() {
           )}
           {!isLoading &&
             !isError &&
-            boards.map((board) => <BoardCard key={board.id} board={board} />)}
+            boards.map((board) => (
+              <BoardCard
+                key={board.id}
+                board={board}
+                onClick={() => navigate("/boards/kanban")}
+              />
+            ))}
           {isRefreshing && <p>Atualizando boards...</p>}
         </div>
       </Page>

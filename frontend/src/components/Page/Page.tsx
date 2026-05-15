@@ -13,7 +13,9 @@ export function Page({ children }: PageProps) {
       <Sidebar />
 
       <section className="page-content">
-        {children}
+        <section className="page-section">
+          {children}
+        </section>
       </section>
     </main>
   );
