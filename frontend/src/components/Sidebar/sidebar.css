@@ -29,6 +29,19 @@
   color: #64748b;
 }
 
+.sidebar-brand-kanban h1 {
+  margin-top: 2px;
+  font-size: 24px;
+  line-height: 1.05;
+}
+
+.sidebar-brand-kanban p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
 .sidebar-nav {
   display: flex;
   flex-direction: column;

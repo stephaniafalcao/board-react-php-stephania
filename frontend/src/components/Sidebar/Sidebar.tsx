@@ -1,5 +1,6 @@
 import "./sidebar.css";
 import { NavLink, useLocation } from "react-router-dom";
+import { LayoutGrid, PanelsTopLeft } from "lucide-react";
 import { SidebarIcon } from "./Icon/SidebarIcon";
 import { SidebarLinkIcon } from "./Icon/SidebarLinkIcon";
 
@@ -8,16 +9,26 @@ export function Sidebar() {
   const isKanbanRoute = pathname.startsWith("/boards/kanban");
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isKanbanRoute ? "sidebar-kanban" : ""}`.trim()}>
       <div className="sidebar-logo-area">
         <div className="logo-icon">
-          <SidebarIcon/>
+          {isKanbanRoute ? (
+            <PanelsTopLeft size={18} strokeWidth={2.2} />
+          ) : (
+            <SidebarIcon />
+          )}
         </div>
 
-        <div>
-          <h1>KanbanFlow</h1>
-          <p>PRODUCTIVITY</p>
-          <p>WORKSPACE</p>
+        <div className={`sidebar-brand ${isKanbanRoute ? "sidebar-brand-kanban" : ""}`.trim()}>
+          <h1>{isKanbanRoute ? "Workspace" : "KanbanFlow"}</h1>
+          {isKanbanRoute ? (
+            <p>Productivity Suite</p>
+          ) : (
+            <>
+              <p>PRODUCTIVITY</p>
+              <p>WORKSPACE</p>
+            </>
+          )}
         </div>
       </div>
 
@@ -28,7 +39,13 @@ export function Sidebar() {
             `sidebar-link${isActive && !isKanbanRoute ? " active" : ""}`
           }
         >
-          <span className="sidebar-link-icon"><SidebarLinkIcon/></span>
+          <span className="sidebar-link-icon">
+            {isKanbanRoute ? (
+              <LayoutGrid size={16} strokeWidth={2.2} />
+            ) : (
+              <SidebarLinkIcon />
+            )}
+          </span>
           <span>Dashboard</span>
         </NavLink>
       </nav>

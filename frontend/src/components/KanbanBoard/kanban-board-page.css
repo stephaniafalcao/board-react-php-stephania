@@ -1,17 +1,5 @@
-.kanban-board-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.kanban-board-top .header {
-  margin-bottom: 0;
-}
-
 .create-task-button {
-  margin-top: 38px;
-  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .kanban-columns {
@@ -29,6 +17,12 @@
   background: #eef2f7;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.kanban-column-drop-active {
+  border-color: #93b1e5;
+  background: #e9eff9;
 }
 
 .kanban-column-todo,
@@ -102,6 +96,13 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-height: 72px;
+  border-radius: 8px;
+}
+
+.kanban-column-tasks-drop-active {
+  outline: 2px dashed #a9bfeb;
+  outline-offset: 2px;
 }
 
 .kanban-task-card {
@@ -111,6 +112,15 @@
   border-radius: 6px;
   border: 1px solid #dbe3ee;
   background: #ffffff;
+  cursor: grab;
+}
+
+.kanban-task-card:active {
+  cursor: grabbing;
+}
+
+.kanban-task-card-dragging {
+  opacity: 0.55;
 }
 
 .kanban-task-card::before {
@@ -176,15 +186,8 @@
 }
 
 @media (max-width: 780px) {
-  .kanban-board-top {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
-  }
-
   .create-task-button {
     margin-top: 0;
-    align-self: flex-start;
   }
 
   .kanban-columns {
